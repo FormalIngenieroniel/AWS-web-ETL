@@ -1,0 +1,126 @@
+import React, { useState, useEffect } from 'react';
+
+function App() {
+  // Estado para la lista de usuarios
+  const [users, setUsers] = useState([]);
+  
+  // Estado para los campos del nuevo usuario
+  const [newUser, setNewUser] = useState({
+    nombres: '',
+    apellidos: '',
+    fecha_nacimiento: '',
+    password: ''
+  });
+
+  // Obtener la lista de usuarios al cargar la página
+  useEffect(() => {
+    fetch('http://44.204.188.28:5000/users') // Cambia esto a tu dirección correcta
+      .then(response => response.json())
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error fetching users:', error));
+  }, []);
+
+  // Manejar los cambios en los campos del formulario
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setNewUser({ ...newUser, [name]: value });
+  };
+
+  // Enviar el formulario para crear un nuevo usuario
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    fetch('http://44.204.188.28:5000/register', {  // Cambia esto a tu endpoint de creación
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newUser),
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Añadir el nuevo usuario a la lista
+      // Asume que el usuario fue creado con éxito incluso si no se recibe un ID
+      const createdUser = {
+        ...newUser,
+        id: Date.now() // Genera un ID temporal si no se recibe uno del backend
+      };
+      setUsers([...users, createdUser]);
+      // Resetea el formulario
+      setNewUser({
+        nombres: '',
+        apellidos: '',
+        fecha_nacimiento: '',
+        password: ''
+      });
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+  };
+
+  return (
+    <div>
+      <h1>Lista de Usuarios</h1>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            {user.nombres} {user.apellidos} - {user.fecha_nacimiento}
+          </li>
+        ))}
+      </ul>
+
+      <h2>Crear un nuevo usuario</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Nombres:
+          <input
+            type="text"
+            name="nombres"
+            value={newUser.nombres}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Apellidos:
+          <input
+            type="text"
+            name="apellidos"
+            value={newUser.apellidos}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Fecha de Nacimiento:
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={newUser.fecha_nacimiento}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Contraseña:
+          <input
+            type="password"
+            name="password"
+            value={newUser.password}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Crear Usuario</button>
+      </form>
+    </div>
+  );
+}
+
+export default App;
+
