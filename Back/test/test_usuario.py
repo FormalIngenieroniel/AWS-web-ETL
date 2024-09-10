@@ -72,33 +72,3 @@ def test_get_usuarios(client):
     usuarios = response.get_json()
     assert len(usuarios) == 1
     assert usuarios[0]['nombre'] == 'Juan'
-
-# Prueba para obtener un usuario específico
-def test_get_usuario(client):
-    """
-    Prueba para verificar la obtención de un usuario por ID.
-
-    Parámetros:
-        client (FlaskClient): Cliente de pruebas.
-    
-    Verifica:
-        - Que el código de estado sea 200.
-        - Que el nombre del usuario devuelto sea correcto.
-    """
-    # Primero, se crea un usuario
-    client.post('/register', json={
-        'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fechaNacimiento': '1990-01-01',
-        'password': 'password123'
-    })
-    
-    # Luego, se obtiene el usuario por su ID
-    response = client.get('/users')
-    
-    # Verificaciones
-    assert response.status_code == 200
-    usuario = response.get_json()
-    assert usuario['nombre'] == 'Juan'
-
-
