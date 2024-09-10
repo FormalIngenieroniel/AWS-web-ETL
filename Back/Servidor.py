@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS  # Importa CORS
+from datetime import datetime
 
 # Inicializa la instancia de SQLAlchemy, pero sin conectarla aún a la app
 db = SQLAlchemy()
