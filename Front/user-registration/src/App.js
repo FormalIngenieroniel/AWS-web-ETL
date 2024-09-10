@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import './App.css';
 
 function App() {
-  // Estado para la lista de usuarios
   const [users, setUsers] = useState([]);
-  
-  // Estado para los campos del nuevo usuario
   const [newUser, setNewUser] = useState({
     nombres: '',
     apellidos: '',
@@ -12,25 +10,22 @@ function App() {
     password: ''
   });
 
-  // Obtener la lista de usuarios al cargar la página
   useEffect(() => {
-    fetch('http://44.204.188.28:5000/users') // Cambia esto a tu dirección correcta
+    fetch('http://44.204.188.28:5000/users')
       .then(response => response.json())
       .then(data => setUsers(data))
       .catch(error => console.error('Error fetching users:', error));
   }, []);
 
-  // Manejar los cambios en los campos del formulario
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setNewUser({ ...newUser, [name]: value });
   };
 
-  // Enviar el formulario para crear un nuevo usuario
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch('http://44.204.188.28:5000/register', {  // Cambia esto a tu endpoint de creación
+    fetch('http://44.204.188.28:5000/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,14 +34,11 @@ function App() {
     })
     .then(response => response.json())
     .then(data => {
-      // Añadir el nuevo usuario a la lista
-      // Asume que el usuario fue creado con éxito incluso si no se recibe un ID
       const createdUser = {
         ...newUser,
-        id: Date.now() // Genera un ID temporal si no se recibe uno del backend
+        id: Date.now()
       };
       setUsers([...users, createdUser]);
-      // Resetea el formulario
       setNewUser({
         nombres: '',
         apellidos: '',
@@ -60,12 +52,14 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Lista de Usuarios</h1>
-      <ul>
+    <div className="container">
+      <div className="header">
+        <h1>Lista de Usuarios</h1>
+      </div>
+      <ul className="user-list">
         {users.map((user) => (
           <li key={user.id}>
-            {user.nombres} {user.apellidos} - {user.fecha_nacimiento}
+            <span>{user.nombres} {user.apellidos} - {user.fecha_nacimiento}</span>
           </li>
         ))}
       </ul>
@@ -82,7 +76,6 @@ function App() {
             required
           />
         </label>
-        <br />
         <label>
           Apellidos:
           <input
@@ -93,7 +86,6 @@ function App() {
             required
           />
         </label>
-        <br />
         <label>
           Fecha de Nacimiento:
           <input
@@ -104,7 +96,6 @@ function App() {
             required
           />
         </label>
-        <br />
         <label>
           Contraseña:
           <input
@@ -115,7 +106,6 @@ function App() {
             required
           />
         </label>
-        <br />
         <button type="submit">Crear Usuario</button>
       </form>
     </div>
@@ -123,4 +113,3 @@ function App() {
 }
 
 export default App;
-
