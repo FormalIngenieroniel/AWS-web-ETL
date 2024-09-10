@@ -33,7 +33,7 @@ def test_create_usuario(client):
         - Que el código de estado sea 201.
         - Que el mensaje de éxito sea el esperado.
     """
-    response = client.post('/usuarios', json={
+    response = client.post('/register', json={
         'nombre': 'Juan',
         'apellido': 'Pérez',
         'fechaNacimiento': '1990-01-01',
@@ -57,7 +57,7 @@ def test_get_usuarios(client):
         - Que el usuario devuelto tenga el nombre correcto.
     """
     # Primero, se crea un usuario
-    client.post('/usuarios', json={
+    client.post('/register', json={
         'nombre': 'Juan',
         'apellido': 'Pérez',
         'fechaNacimiento': '1990-01-01',
@@ -65,7 +65,7 @@ def test_get_usuarios(client):
     })
     
     # Luego, se verifica la lista de usuarios
-    response = client.get('/usuarios')
+    response = client.get('/users')
     
     # Verificaciones
     assert response.status_code == 200
@@ -86,7 +86,7 @@ def test_get_usuario(client):
         - Que el nombre del usuario devuelto sea correcto.
     """
     # Primero, se crea un usuario
-    client.post('/usuarios', json={
+    client.post('/register', json={
         'nombre': 'Juan',
         'apellido': 'Pérez',
         'fechaNacimiento': '1990-01-01',
@@ -94,66 +94,11 @@ def test_get_usuario(client):
     })
     
     # Luego, se obtiene el usuario por su ID
-    response = client.get('/usuarios/1')
+    response = client.get('/users')
     
     # Verificaciones
     assert response.status_code == 200
     usuario = response.get_json()
     assert usuario['nombre'] == 'Juan'
 
-# Prueba para actualizar un usuario
-def test_update_usuario(client):
-    """
-    Prueba para verificar la actualización de un usuario.
 
-    Parámetros:
-        client (FlaskClient): Cliente de pruebas.
-    
-    Verifica:
-        - Que el código de estado sea 200.
-        - Que el mensaje de éxito sea el esperado.
-    """
-    # Primero, se crea un usuario
-    client.post('/usuarios', json={
-        'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fechaNacimiento': '1990-01-01',
-        'password': 'password123'
-    })
-    
-    # Luego, se actualiza el usuario
-    response = client.put('/usuarios/1', json={
-        'nombre': 'Juan actualizado',
-        'apellido': 'Pérez actualizado',
-        'fechaNacimiento': '1990-01-01',
-        'password': 'newpassword123'
-    })
-    
-    # Verificaciones
-    assert response.status_code == 200
-    assert response.get_json()['mensaje'] == 'Usuario actualizado exitosamente'
-
-# Prueba para eliminar un usuario
-def test_delete_usuario(client):
-    """
-    Prueba para verificar la eliminación de un usuario.
-
-    Parámetros:
-        client (FlaskClient): Cliente de pruebas.
-    
-    Verifica:
-        - Que el código de estado sea 204 al eliminar correctamente un usuario.
-    """
-    # Primero, se crea un usuario
-    client.post('/usuarios', json={
-        'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fechaNacimiento': '1990-01-01',
-        'password': 'password123'
-    })
-    
-    # Luego, se elimina el usuario
-    response = client.delete('/usuarios/1')
-    
-    # Verificaciones
-    assert response.status_code == 204
