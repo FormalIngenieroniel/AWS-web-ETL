@@ -15,7 +15,7 @@ class Usuario(db.Model):
         id (int): Identificador único del usuario.
         nombre (str): Nombre del usuario.
         apellidos (str): Apellido del usuario.
-        fecha_nacimiento (str): Fecha de nacimiento del usuario.
+        fecha_nacimiento (date): Fecha de nacimiento del usuario.
         password (str): Contraseña del usuario.
     """
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -54,10 +54,12 @@ def create_test_app():
     @app.route('/register', methods=['POST'])
     def create_usuario():
         data = request.get_json()
+        # Convertir fecha_nacimiento a datetime.date
+        fecha_nacimiento = datetime.strptime(data['fecha_nacimiento'], '%Y-%m-%d').date()
         nuevo_usuario = Usuario(
             nombre=data['nombre'],
             apellidos=data['apellidos'],
-            fecha_nacimiento=data['fecha_nacimiento'],
+            fecha_nacimiento=fecha_nacimiento,
             password=data['password']
         )
         db.session.add(nuevo_usuario)
@@ -71,12 +73,12 @@ def create_test_app():
             'id': u.id,
             'nombre': u.nombre,
             'apellidos': u.apellidos,
-            'fecha_nacimiento': u.fecha_nacimiento,
+            'fecha_nacimiento': u.fecha_nacimiento.isoformat(),  # Convert date to string
             'password': u.password
         } for u in usuarios])
     
     return app
 
 if __name__ == '__main__':
-    app = create_app()
+    app = create_test_app()
     app.run(host='0.0.0.0', port=5000, debug=True)
