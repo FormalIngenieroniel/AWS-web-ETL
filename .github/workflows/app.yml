@@ -47,7 +47,7 @@ jobs:
         if: success()  # Solo ejecutar si las pruebas pasan
         env:
           EC2_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{ secrets.SSH_HOST_BACK }}
+          SERVER_IP: ${{ secrets.SSH_HOST_BACK_FRONT }}
           EC2_USER: ${{ secrets.USER_NAME }}
         run: |
           echo "$EC2_PRIVATE_KEY" > ec2_key && chmod 600 ec2_key
