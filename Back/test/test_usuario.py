@@ -35,8 +35,8 @@ def test_create_usuario(client):
     """
     response = client.post('/register', json={
         'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fechaNacimiento': '1990-01-01',
+        'apellidos': 'Pérez',
+        'fecha_nacimiento': '1990-01-01',
         'password': 'password123'
     })
     
@@ -59,8 +59,8 @@ def test_get_usuarios(client):
     # Primero, se crea un usuario
     client.post('/register', json={
         'nombre': 'Juan',
-        'apellido': 'Pérez',
-        'fechaNacimiento': '1990-01-01',
+        'apellidos': 'Pérez',
+        'fecha_nacimiento': '1990-01-01',
         'password': 'password123'
     })
     
