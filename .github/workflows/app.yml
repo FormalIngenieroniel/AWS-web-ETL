@@ -37,7 +37,7 @@ jobs:
       # Set PYTHONPATH and run unit tests
       - name: Run Unit Tests
         env:
-          PYTHONPATH: ${{ github.workspace }}/Backend
+          PYTHONPATH: ${{ github.workspace }}/Back
         run: |
           cd Backend &&
           pytest tests/test_usuario.py --disable-warnings
@@ -52,13 +52,13 @@ jobs:
         run: |
           echo "$EC2_PRIVATE_KEY" > ec2_key && chmod 600 ec2_key
           ssh -o StrictHostKeyChecking=no -i ec2_key ${EC2_USER}@${SERVER_IP} '
-              cd /home/ubuntu/Parcial &&
+              cd /home/ubuntu/Parcial1-BigData &&
               git fetch --all &&
-              git switch Backend &&
-              git reset --hard origin/Backend &&
-              git pull origin Backend &&
-              source /home/ubuntu/venv/bin/activate &&
-              cd /home/ubuntu/Parcial/Backend &&
+              git switch Back &&
+              git reset --hard origin/Back &&
+              git pull origin Back &&
+              source /home/ubuntu/env/bin/activate &&
+              cd /home/ubuntu/Parcial1-BigData/Back &&
               pip install -r requirements.txt &&
               fuser -k 5000/tcp || true &&
               tmux kill-session -t mysession || true &&  # Terminar sesión existente si existe
