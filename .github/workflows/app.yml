@@ -39,11 +39,11 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/Back
         run: |
-          cd Backend &&
+          cd Back &&
           pytest tests/test_usuario.py --disable-warnings
           
       # Despliegue del Backend si las pruebas unitarias pasan
-      - name: Deploy Backend to EC2 Instance
+      - name: Deploy Back to EC2 Instance
         if: success()  # Solo ejecutar si las pruebas pasan
         env:
           EC2_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
