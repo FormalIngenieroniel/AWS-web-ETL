@@ -40,7 +40,7 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}/Back
         run: |
           cd Back &&
-          pytest tests/test_usuario.py --disable-warnings
+          pytest test/test_usuario.py --disable-warnings
           
       # Despliegue del Backend si las pruebas unitarias pasan
       - name: Deploy Back to EC2 Instance
