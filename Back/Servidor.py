@@ -20,7 +20,7 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(100), nullable=False)
     apellidos = db.Column(db.String(100), nullable=False)
-    fecha_nacimiento = db.Column(db.Date, nullable=False)
+    fecha_nacimiento = db.Column(db.String(10), nullable=False)
     password = db.Column(db.String(225), nullable=False)
 
 def create_test_app():
