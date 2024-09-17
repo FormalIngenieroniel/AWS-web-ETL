@@ -68,7 +68,7 @@ test('creates a new user', async () => {
   fireEvent.click(screen.getByText(/Crear Usuario/i));
 
   // Verificar que el fetch fue llamado correctamente
-  expect(global.fetch).toHaveBeenCalledWith('http://44.204.188.28:5000/register', expect.objectContaining({
+  expect(global.fetch).toHaveBeenCalledWith('http://54.90.65.101:5000/register', expect.objectContaining({
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
