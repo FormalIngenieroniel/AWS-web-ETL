@@ -9,7 +9,7 @@ CORS(app)
 
 # Configuración de la conexión a la base de datos SQL
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://usuario:password@172.31.87.168/db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://usuario:password@172.31.87.146/db'
 db = SQLAlchemy(app)
 
 # Definición del modelo de usuario
