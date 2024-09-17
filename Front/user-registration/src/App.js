@@ -11,7 +11,7 @@ function App() {
   });
 
   useEffect(() => {
-    fetch('http://44.204.188.28:5000/users')
+    fetch('http://54.90.65.101:5000/users')
       .then(response => response.json())
       .then(data => setUsers(data))
       .catch(error => console.error('Error fetching users:', error));
@@ -25,7 +25,7 @@ function App() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    fetch('http://44.204.188.28:5000/register', {
+    fetch('http://54.90.65.101:5000/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
