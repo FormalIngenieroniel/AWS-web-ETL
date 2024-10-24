@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 CORS(app)
 
-# Configuración de la conexión a la base de datos SQL
+# Configuración de la conexión a la base de datos SQLs
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://usuario:password@172.31.87.146/db'
 db = SQLAlchemy(app)
