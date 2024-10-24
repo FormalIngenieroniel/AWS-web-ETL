@@ -1,73 +1,121 @@
-from sqlalchemy import text
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+import os
+import sqlite3
+from flask import Flask, jsonify, request
+import mysql.connector
 from flask_cors import CORS
-from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(_name_)
 
-# Configuración de la conexión a la base de datos SQLs
+# Configuración de CORS
+CORS(app, resources={r"/*": {"origins": "http://ec2-3-86-153-248.compute-1.amazonaws.com:3000"}})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://usuario:password@172.31.87.146/db'
-db = SQLAlchemy(app)
-
-# Definición del modelo de usuario
-class Usuario(db.Model):
-    __tablename__ = 'usuarios'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nombres = db.Column(db.String(100), nullable=False)
-    apellidos = db.Column(db.String(100), nullable=False)
-    fecha_nacimiento = db.Column(db.Date, nullable=False)
-    password = db.Column(db.String(225), nullable=False)
-
-# Ruta para registrar un nuevo usuario
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    try:
-        nuevo_usuario = Usuario(
-            nombres=data['nombres'],
-            apellidos=data['apellidos'],
-            fecha_nacimiento=data['fecha_nacimiento'],
-            password=data['password']
+def get_db_connection():
+    if os.getenv('FLASK_ENV') == 'testing':
+        # Usar SQLite en memoria para pruebas
+        conn = sqlite3.connect(':memory:')
+        return conn
+    else:
+        # Conectar a RDS MySQL en producción (Sakila)
+        conn = mysql.connector.connect(
+            host='database-2.c99cmwwsyi8p.us-east-1.rds.amazonaws.com',  # Cambia al endpoint RDS
+            user='main',  # Reemplaza con tu usuario
+            password='Lucas3044.',  # Reemplaza con tu contraseña
+            database='sakila'  # Usar la base de datos Sakila
         )
-        db.session.add(nuevo_usuario)
-        db.session.commit()
-        return jsonify({"message": "Usuario registrado con éxito"}), 201
+        return conn
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    data = request.get_json()
+    nombre_usuario = data.get('nombre_usuario')
+    correo = data.get('correo')
+    contrasena = data.get('contrasena')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Usar diferentes marcadores de posición para SQLite y MySQL
+    query = 'INSERT INTO table1 (nombre_usuario, correo, contrasena) VALUES (%s, %s, %s)'
+
+    try:
+        cursor.execute(query, (nombre_usuario, correo, contrasena))
+        conn.commit()
+        return jsonify({'message': 'User added successfully!'})
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
-# Ruta para obtener los usuarios registrados
+        print(f"Error: {e}")
+        return jsonify({'message': 'Failed to add user'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 @app.route('/users', methods=['GET'])
 def get_users():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, nombre_usuario, correo FROM table1')
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    # Convertir los datos a un formato de diccionario
+    users = [{'id': row[0], 'nombre_usuario': row[1], 'correo': row[2]} for row in rows]
+    return jsonify(users)
+
+@app.route('/add_rental', methods=['POST'])
+def add_rental():
+    data = request.get_json()
+    customer_id = data.get('customer_id')
+    film_id = data.get('film_id')
+    rental_date = data.get('rental_date')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Insertar la renta en la tabla rental de Sakila
+    query = '''
+    INSERT INTO rental (rental_date, inventory_id, customer_id, staff_id, return_date)
+    VALUES (%s, (SELECT inventory_id FROM inventory WHERE film_id = %s LIMIT 1), %s, 1, NULL)
+    '''
+
     try:
-        usuarios = Usuario.query.all()  # Obtiene todos los usuarios
-        usuarios_list = [
-            {
-                "id": usuario.id,
-                "nombres": usuario.nombres,
-                "apellidos": usuario.apellidos,
-                "fecha_nacimiento": usuario.fecha_nacimiento.strftime('%Y-%m-%d'),
-                "password": usuario.password
-            }
-            for usuario in usuarios
-        ]
-        return jsonify(usuarios_list), 200
+        cursor.execute(query, (rental_date, film_id, customer_id))
+        conn.commit()
+        return jsonify({'message': 'Rental added successfully!'})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error: {e}")
+        return jsonify({'message': 'Failed to add rental'}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
+@app.route('/customers', methods=['GET'])
+def get_customers():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT customer_id, first_name, last_name, email FROM customer')
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-@app.route('/check_db')
-def check_db():
-    try:
-        # Ejecuta una simple consulta para verificar la conexión
-        result = db.session.execute(text('SELECT 1'))
-        return 'Conexión exitosa a la base de datos'
-    except Exception as e:
-        return f'Error al conectar a la base de datos: {str(e)}'
+    # Convertir los datos a un formato de diccionario
+    customers = [{'customer_id': row[0], 'first_name': row[1], 'last_name': row[2], 'email': row[3]} for row in rows]
+    return jsonify(customers)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+@app.route('/films', methods=['GET'])
+def get_films():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('SELECT film_id, title FROM film')
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
+    # Convertir los datos a un formato de diccionario
+    films = [{'film_id': row[0], 'title': row[1]} for row in rows]
+    return jsonify(films)
 
+if _name_ == '_main_':
+    app.run(port=5000, host='0.0.0.0', debug=True)
