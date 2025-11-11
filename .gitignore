@@ -1,0 +1,11 @@
+# Entorno virtual
+Back/env/
+env/
+
+# Archivos de compilación
+*.pyc
+*.pyo
+__pycache__/
+
+# Archivos de configuración
+*.env
