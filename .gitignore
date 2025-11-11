@@ -1,7 +1,6 @@
 # Entorno virtual
-Back/env/
 env/
-
+Back/env/
 # Archivos de compilación
 *.pyc
 *.pyo
