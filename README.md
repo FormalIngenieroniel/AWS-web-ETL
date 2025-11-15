@@ -1,4 +1,5 @@
 # 🛢️ AWS ETL Pipeline – Sakila Data Lake Analytics (Glue + S3 + Athena)
+
 This project implements a data analytics architecture for the Sakila movie rental database using AWS services. It features ETL processes in AWS Glue for incremental data ingestion, transformation, and loading into a data lake in S3 as Parquet files.
 
 Data is queryable via AWS Athena, with automated schema detection using Glue Crawlers and orchestration via Glue Workflows. A modified web application allows inserting new rentals into the Sakila RDS database, triggering updates to the analytics system. The architecture supports continuous deployment with unit tests, managing resources programmatically via boto3.
@@ -131,58 +132,27 @@ US holiday status (using predefined holiday logic).
 
 Workflow includes job execution followed by a crawler.
 
-🧠 Data Transformation (SQL and Python)
-Fact Sales (SQL)
-For Fact Sales, an example SQL join:
+---
 
-SQL
+# 🔧 AWS Services Requirements
 
-SELECT
-    c.customer_id,
-    f.film_id,
-    s.store_id,
-    CAST(REPLACE(SUBSTRING(r.rental_date, 1, 10), '-', '') AS INT) AS date_sales_id,
-    r.amount
-FROM
-    rental r
-JOIN
-    customer c ON r.customer_id = c.customer_id
-JOIN
-    inventory i ON r.inventory_id = i.inventory_id
-JOIN
-    film f ON i.film_id = f.film_id
-JOIN
-    store s ON i.store_id = s.store_id;
-Date_sales (Python)
-For the Date_sales dimension in Python:
+- AWS Glue (for ETL jobs, crawlers, workflows)
+- Amazon S3 (for data lake storage as Parquet)
+- AWS Athena (for querying the cataloged data)
+- Amazon RDS (with Sakila database schema)
+- Python (with boto3 and React for develoment abd deployment)
 
-Use datetime to iterate dates.
+---
 
-Determine quarter: date.month // 4 + 1.
+# 📊 Future Improvements
 
-Weekend: date.weekday() >= 5.
+- 🔄 Integrate AWS Lambda for event-driven ETL triggers on new rentals.
+- 🧮 Add more dimensions (e.g., Actor, Category from Sakila).
+- 🖥️ Build a dashboard with Amazon QuickSight for visualizations.
+- 🧭 Implement monitoring with CloudWatch for ETL failures.
 
-US holidays: Check against a list (e.g., New Year's, Independence Day).
+---
 
-🔧 AWS Services Requirements
-AWS Glue (for ETL jobs, crawlers, workflows)
+# 👨‍💻 Author
 
-Amazon S3 (for data lake storage as Parquet)
-
-AWS Athena (for querying the cataloged data)
-
-Amazon RDS (with Sakila database schema)
-
-Python (with boto3 for deployment)
-
-📊 Future Improvements
-🔄 Integrate AWS Lambda for event-driven ETL triggers on new rentals.
-
-🧮 Add more dimensions (e.g., Actor, Category from Sakila).
-
-🖥️ Build a dashboard with Amazon QuickSight for visualizations.
-
-🧭 Implement monitoring with CloudWatch for ETL failures.
-
-👨‍💻 Author
-Developed by [FormalIngenieroniel]
+Developed by **Daniel Bernal**
