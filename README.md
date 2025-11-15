@@ -2,7 +2,7 @@
 
 This project implements a data analytics architecture for the Sakila movie rental database using AWS services. It features ETL processes in AWS Glue for incremental data ingestion, transformation, and loading into a data lake in S3 as Parquet files.
 
-Data is queryable via AWS Athena, with automated schema detection using Glue Crawlers and orchestration via Glue Workflows. A modified web application allows inserting new rentals into the Sakila RDS database, triggering updates to the analytics system. The architecture supports continuous deployment with unit tests, managing resources programmatically via boto3.
+Data is queryable via AWS Athena, with automated schema detection using Glue Crawlers and orchestration via Glue Workflows. A modified web application allows inserting new rentals into the Sakila RDS database, triggering updates to the analytics system. The architecture supports continuous deployment with unit tests, managing resources programmatically.
 
 ---
 
