@@ -49,7 +49,7 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 ## base_datos.py
 
 - Manages connections to the Sakila RDS database.
-- Implements logic for the date dimension ETL, including calculations for quarter, weekday/weekend, and US holidays.
+- Defines and creates a 'usuarios' table for user management, with columns for ID, names, surnames, birth date, and password.
 - Uses Python to generate date records and integrate with Glue workflows.
 
 ## app.py
@@ -111,34 +111,17 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 
 # 🧠 ETL Processes Summary
 
-Incremental Dimension ETL
-Connect to RDS Sakila.
+## Incremental Dimension ETL
 
-Identify new/updated records in Film, Customer, Store.
+- Connect to RDS Sakila.
+- Identify new/updated records in Film, Customer, Store.
+- Transform and write as Parquet to S3 dimension paths.
 
-Transform and write as Parquet to S3 dimension paths.
+## Fact Sales ETL
 
-Ensure daily execution for increments.
-
-Fact Sales ETL
-Joins customer, film, rental, and store tables.
-
-Transforms rental_date to Date_sales_id (e.g., CAST to INT in YYYYMMDD format).
-
-Writes combined data as Parquet to S3 fact path.
-
-Date Dimension ETL
-Python script generates date records.
-
-Calculates:
-
-Quarter of the year.
-
-Weekday (True/False for weekend).
-
-US holiday status (using predefined holiday logic).
-
-Workflow includes job execution followed by a crawler.
+- Joins customer, film, rental, and store tables.
+- Transforms rental_date to Date_sales_id (e.g., CAST to INT in YYYYMMDD format).
+- Writes combined data as Parquet to S3 fact path.
 
 ---
 
@@ -148,7 +131,7 @@ Workflow includes job execution followed by a crawler.
 - Amazon S3 (for data lake storage as Parquet)
 - AWS Athena (for querying the cataloged data)
 - Amazon RDS (with Sakila database schema)
-- Python (with boto3 and React for develoment abd deployment)
+- Python (with React for develoment and deployment)
 
 ---
 
