@@ -10,11 +10,11 @@ Data is queryable via AWS Athena, with automated schema detection using Glue Cra
 
 This project transforms the Sakila database (a sample movie rental system) into a dimensional model for analytics.
 
-Perception → Data is ingested from RDS sources.
+- Perception → Data is ingested from RDS sources.
 
-Decision-making → ETL jobs apply transformations like joins and calculations.
+- Decision-making → ETL jobs apply transformations like joins and calculations.
 
-Action → Data is stored in S3 and cataloged for querying.
+- Action → Data is stored in S3 and cataloged for querying.
 
 This setup creates a scalable analytics system, enabling insights into sales, customers, and inventory while keeping data updated.
 
@@ -22,58 +22,66 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 
 # 🚀 Features
 
-📥 **Incremental ETL**: Daily updates for dimension tables (Film, Customer, Store) from RDS to S3.
+- 📥 **Incremental ETL**: Allows updates for dimension tables (Film, Customer, Store) from RDS to S3.
 
-🔗 **SQL Transformations**: Joins multiple tables (customer, film, rental, store) to build the Fact Sales table.
+- 🔗 **SQL Transformations**: Joins multiple tables (customer, film, rental, store) to build the Fact Sales table.
 
-🗓️ **Python Date Dimension**: Generates date details including quarter, weekday/weekend, and US holidays.
+- 🗓️ **Python Date Dimension**: Generates date details including quarter, weekday/weekend, and US holidays.
 
-🕷️ **Glue Crawlers**: Automatically detect and catalog Parquet schemas in the Glue Data Catalog.
+- 🕷️ **Glue Crawlers**: Automatically detect and catalog Parquet schemas in the Glue Data Catalog.
 
-🔄 **Glue Workflows**: Orchestrate ETL jobs and crawlers for sequential execution.
+- 🔄 **Glue Workflows**: Orchestrate ETL jobs and crawlers for sequential execution.
 
-🌐 **Web Application**: Modified to insert new rentals (date, customer document, film selection via dropdown).
+- 🌐 **Web Application**: Created to insert new rentals (date, customer document, film selection via dropdown).
 
-🚀 **Continuous Deployment**: Unit tests and boto3 for managing AWS resources like jobs in S3.
+- 🚀 **Continuous Deployment**: Unit tests and boto3 for managing AWS resources like jobs in S3.
 
-📊 **Athena Querying**: Visualize and query the data lake directly.
+- 📊 **Athena Querying**: Visualize and query the data lake directly.
 
-✅ **Dimensional Modeling**: Supports star schema with facts and dimensions for efficient analytics.
+- ✅ **Dimensional Modeling**: Supports star schema with facts and dimensions for efficient analytics.
 
-✅ Date ID Formatting: Converts dates to integer format (e.g., 20051201 for 2005-12-01).
+- 🚧 **Date ID Formatting**: Converts dates to integer format (e.g., 20051201 for 2005-12-01).
 
 ---
 
 # 💻 Code Workflow
 
-scripts/glue_etl_incremental.py
-Handles incremental data movement from RDS Sakila tables (Film, Customer, Store) to S3 dimension tables.
+## base_datos.py
 
-Runs daily to append new or updated records as Parquet files.
+- Manages connections to the Sakila RDS database.
+- Implements logic for the date dimension ETL, including calculations for quarter, weekday/weekend, and US holidays.
+- Uses Python to generate date records and integrate with Glue workflows.
 
-scripts/glue_etl_fact_sales.py
-Combines data from customer, film, rental, and store tables.
+## app.py
 
-Uses the SQL transform option in Glue to perform joins and create the Fact Sales table.
+- Backend server for the web application (likely using Flask or similar).
+- Handles API endpoints for inserting new rentals into the RDS database.
+- May trigger ETL updates or use boto3 to manage AWS resources.
 
-Converts rental_date to Date_sales_id as an integer.
+## Back/test/Servidor.py
 
-scripts/glue_etl_date_dimension.py
-Python script to populate the Date_sales dimension.
+- Test script or server implementation for backend testing.
+- Possibly includes unit tests for database interactions or ETL processes.
 
-Calculates additional attributes like year quarter, weekday/weekend status, and US holiday flags.
+## SQL/
 
-Integrated with a workflow that runs the job followed by a crawler for catalog updates.
+- Directory containing SQL scripts for transformations.
+- Includes queries for joining customer, film, rental, and store tables to build Fact Sales, with date ID conversion.
 
-sql/fact_sales_transform.sql
-SQL query for the Fact Sales ETL, including joins and date transformations.
+## .github/workflows/app.yaml
 
-web_app/
-Contains the modified web application code.
+- CI/CD workflow for the backend application.
+- Runs unit tests, deploys scripts to S3, and uses boto3 to create/update Glue jobs, crawlers, and workflows.
 
-Allows users to input rental date, customer document, and select a film from a dropdown.
+## .github/workflows/app-front.yaml
 
-Inserts data directly into the Sakila RDS database, triggering ETL updates.
+- CI/CD workflow for the frontend.
+- Builds and deploys the web app, ensuring continuous integration for rental insertion features.
+
+## Front/user-registration/
+
+- Frontend component or page for user interactions.
+- Created to include the rental form with date input, customer document, and film dropdown.
 
 ---
 
