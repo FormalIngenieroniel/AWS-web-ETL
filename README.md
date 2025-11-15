@@ -87,25 +87,25 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 
 # 🧩 How It Works
 
-A user accesses the Web Application to create a new rental: enters date, customer document, and selects a film.
+- A user accesses the Web Application to create a new rental: enters date, customer document, and selects a film.
 
-The app inserts the data into the Sakila RDS database (tables like rental).
+- The app inserts the data into the Sakila RDS database (tables like rental).
 
-Incremental ETL jobs run daily via Glue:
+- Incremental ETL jobs run via Glue.
 
-Pull new data from Film, Customer, Store to update dimension tables in S3.
+  - Pull new data from Film, Customer, Store to update dimension tables in S3.
 
-Combine sources to build/update Fact Sales with SQL joins.
+  - Combine sources to build/update Fact Sales with SQL joins.
 
-Generate or update the Date_sales dimension using Python logic.
+  - Generate or update the Date_sales dimension using Python logic.
 
-Glue Crawlers scan the Parquet files in S3 to detect schemas and update the Data Catalog.
+- Glue Crawlers scan the Parquet files in S3 to detect schemas and update the Data Catalog.
 
-Glue Workflows orchestrate the process: execute jobs, then crawlers.
+- Glue Workflows orchestrate the process: execute jobs, then crawlers.
 
-Analysts query the data lake via AWS Athena for insights into sales trends.
+- Analysts query the data lake via AWS Athena for insights into sales trends.
 
-The system maintains data freshness as new rentals are added, with all resources managed via boto3 for CI/CD.
+- The system maintains data freshness as new rentals are added, with all resources managed via boto3 for CI/CD.
 
 ---
 
