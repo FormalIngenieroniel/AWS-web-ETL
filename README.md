@@ -34,7 +34,7 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 
 - 🌐 **Web Application**: Created to insert new rentals (date, customer document, film selection via dropdown).
 
-- 🚀 **Continuous Deployment**: Unit tests and boto3 for managing AWS resources like jobs in S3.
+- 🚀 **Continuous Deployment**: Unit tests for managing AWS resources like jobs in S3.
 
 - 📊 **Athena Querying**: Visualize and query the data lake directly.
 
@@ -54,29 +54,26 @@ This setup creates a scalable analytics system, enabling insights into sales, cu
 
 ## app.py
 
-- Backend server for the web application (likely using Flask or similar).
-- Handles API endpoints for inserting new rentals into the RDS database.
-- May trigger ETL updates or use boto3 to manage AWS resources.
+- Flask backend application with CORS enabled for cross-origin requests.
+- Connects to the AWS MySQL RDS database using Flask-SQLAlchemy.
+- Includes API endpoints: /register (POST), /users (GET) and  /check_db.
 
 ## Back/test/Servidor.py
 
-- Test script or server implementation for backend testing.
-- Possibly includes unit tests for database interactions or ETL processes.
-
-## SQL/
-
-- Directory containing SQL scripts for transformations.
-- Includes queries for joining customer, film, rental, and store tables to build Fact Sales, with date ID conversion.
+- Defines the Usuario model.
+- Provides a function create_test_app() to set up a test Flask application with an in-memory SQLite database for unit testing.
+- Includes test routes: /register (POST) for creating a user (parses birth date to datetime.date); /users (GET) for retrieving users.
 
 ## .github/workflows/app.yaml
 
-- CI/CD workflow for the backend application.
-- Runs unit tests, deploys scripts to S3, and uses boto3 to create/update Glue jobs, crawlers, and workflows.
+- CI/CD workflow named "DeployBackend" triggered on pushes to the "Back" branch.
+- Executes unit tests using pytest on Back/test/test_usuario.py (with PYTHONPATH set).
+- If tests succeed, deploys to an EC2 instance via SSH: pulls the "Back" branch, activates a virtual environment, installs dependencies, kills any process on port 5000, and runs app.py in a detached tmux session, logging to registro.log.
 
 ## .github/workflows/app-front.yaml
 
-- CI/CD workflow for the frontend.
-- Builds and deploys the web app, ensuring continuous integration for rental insertion features.
+- CI/CD workflow named "DeployFrontend" triggered on pushes to the "Front" branch.
+- Deploys to an EC2 instance via SSH: updates packages, installs npm, pulls the "Front" branch, runs npm install and npm run build in Front/user-registration, installs Apache2, clears and sets permissions on /var/www/html/, copies the build output to the web root, and restarts Apache2.
 
 ## Front/user-registration/
 
